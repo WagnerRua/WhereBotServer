@@ -17,11 +17,11 @@ const UserSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
-  robot: {
+  robots: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Robot',
     require: true,
-  },
+  }],
   createdAt: {
     type: Date,
     default: Date.now,

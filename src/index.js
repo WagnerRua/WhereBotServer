@@ -12,5 +12,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 require('./controllers/authController')(app);
 require('./controllers/robotController')(app);
+require('./controllers/surveyController')(app);
 
-app.listen(process.env.PORT || 3000);
+const server = app.listen(process.env.PORT || 8080);
+const io = require("socket.io")(server)
+
+app.set('io', io);
+
+io.on('connection', socket => {
+  socket.on('user.id', (data) => {
+    socket.userID = data.id;
+  });
+});
+

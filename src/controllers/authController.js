@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
+const Robot = require('../models/robot');
 
 const router = express.Router();
 
@@ -14,20 +15,34 @@ function generateToken(params = {}){
 
 
 router.post('/register', async (req, res) => {
-  const { email } = req.body;
+  const { name, email, password, robotID } = req.body;
 
   try{
     if(await User.findOne({ email }))
       return res.status(400).send({ error: 'User already exists.'}); 
 
-    const user = await User.create(req.body);
+    const robot = await Robot.findById(robotID);
+    if(robot.user != null)
+      return res.status(400).send({ error: 'Robot already linked.'}); 
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      robots: [
+        robotID
+      ],
+    });
+
+    robot.user = user._id;
+    robot.save();
   
     user.password = undefined;
 
-    return res.send({ user, token: generateToken({ id: user.id }) });
+    return res.send({ user, token: generateToken({ id: user._id }) });
     
   } catch(err) {
-    return res.status(400).send({ error: 'Registration failed.'});
+    return res.status(400).send({ error: 'Registration failed. Are you sure this robot exists?'});
   }
 });
 

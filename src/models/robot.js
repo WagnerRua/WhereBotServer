@@ -5,22 +5,20 @@ const RobotSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  key: {
-    type: String,
-    required: true,
-  },
   state: {
     type: String,
     default: 'Stopped', // Start, Doing, Finished, Stopped
     required: true,
   },
-  images: [{
-    type: String,
-    required: true,
+  surveys: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Survey',
+    require: true,
   }],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    default: null,
     require: true,
   },
   createdAt: {

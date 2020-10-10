@@ -30,6 +30,16 @@ router.post('/setstate', async (req, res) => {
 
     const robot = await Robot.findByIdAndUpdate(robotID, {state}, {new: true});
 
+    const socketio = req.app.get('io');
+    const sockets = socketio.sockets.sockets;
+    for(const socketId in sockets)
+    {
+      var socket = sockets[socketId]; //loop through and do whatever with each connected socket
+      if('userID' in socket)
+        if(robot.user == socket.userID)
+          socket.emit(`${socket.userID}-robot-state`, {robot});
+    }
+
     return res.send({robot});
   } catch(err) {
     return res.status(400).send({ error: 'Failed to set state.'});
@@ -58,8 +68,17 @@ router.put('/link-key', authMiddleware, async (req, res) => {
 
     const user = await User.findByIdAndUpdate(req.userId, { $push: { "robots": robotID } }, {new: true});
 
+    const socketio = req.app.get('io');
+    const sockets = socketio.sockets.sockets;
+    for(const socketId in sockets)
+    {
+      var socket = sockets[socketId]; //loop through and do whatever with each connected socket
+      if('userID' in socket)
+        if(robot.user == socket.userID)
+          socket.emit(`${socket.userID}-robot`, {robot});
+    }
+
     return res.send({ robot: robot, user: user });
-    
   } catch(err) {
     return res.status(400).send({ error: 'Key link failed'});
   }

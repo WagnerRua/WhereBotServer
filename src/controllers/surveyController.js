@@ -49,7 +49,7 @@ router.post('/new', multer(multerConfig).array("files", 10), async (req, res) =>
       var socket = sockets[socketId]; //loop through and do whatever with each connected socket
       if('userID' in socket){
         if(robot.user == socket.userID){
-          socket.emit(`${socket.userID}`, {survey});
+          socket.emit(`${socket.userID}-survey`, {survey});
         }
       }
     }

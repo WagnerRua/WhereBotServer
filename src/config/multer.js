@@ -10,7 +10,8 @@ module.exports = {
     contentType: multerS3.AUTO_CONTENT_TYPE,
     acl: 'public-read',
     key: (req, file, cb) => {
-      const fileName = `${formatDate(Date.now())}-${file.originalname}`;
+      date = new Date();
+      const fileName = `${date.getTime()}-${file.originalname}`;
       cb(null, fileName);
     },
   }),

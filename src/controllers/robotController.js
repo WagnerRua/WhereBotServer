@@ -40,6 +40,8 @@ router.post('/setstate', async (req, res) => {
           socket.emit(`${socket.userID}-robot-state`, {robot});
     }
 
+    socket.emit(`${robotID}`, {'state': robot.state})
+
     return res.send({robot});
   } catch(err) {
     return res.status(400).send({ error: 'Failed to set state.'});
